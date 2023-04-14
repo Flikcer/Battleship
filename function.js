@@ -79,18 +79,16 @@ function handleValidity(allBlocks, isHorizontal, startIndex, ship) {
     }
   }
 
-  let valid;
+  let valid = true;
   if (isHorizontal) {
-    shipBlocks.every(
+    valid = shipBlocks.every(
       (_shipBlock, index) =>
-        (valid =
-          shipBlocks[0].id % width !==
-          width - (shipBlocks.length - (index + 1)))
+        shipBlocks[0].id % width !== width - (shipBlocks.length - (index + 1))
     );
   } else {
-    shipBlocks.every(
+    valid = shipBlocks.every(
       (_shipBlock, index) =>
-        (valid = shipBlocks[0].id + index * width === shipBlocks[index].id)
+        shipBlocks[0].id + index * width === shipBlocks[index].id
     );
   }
 
@@ -135,7 +133,7 @@ optionShips.forEach((optionShip) =>
   optionShip.addEventListener("dragstart", dragStart)
 );
 
-const allPlayerBlocks = document.querySelectorAll("#player, div");
+const allPlayerBlocks = document.querySelectorAll("#player div");
 allPlayerBlocks.forEach((playerBlock) => {
   playerBlock.addEventListener("dragover", dragOver);
   playerBlock.addEventListener("drop", dropShip);
