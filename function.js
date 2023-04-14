@@ -1,6 +1,9 @@
 const container = document.querySelector("#game-container");
 const option = document.querySelector(".option-container");
 const flipBtn = document.querySelector("#flip-button");
+const startBtn = document.querySelector("#start-button");
+const info = document.querySelector("#info");
+const turn = document.querySelector("#turn-display");
 
 //flip ship
 let angle = 0;
@@ -177,3 +180,33 @@ function highlightArea(startIndex, ship) {
     });
   }
 }
+
+let gameOver = false;
+let playerTurn;
+
+//start game
+function startGame() {
+  if (option.children.length != 0) {
+    info.textContent = "All ships must be placed before start";
+  } else {
+    const allBlocks = document.querySelectorAll("#computer div");
+    allBlocks.forEach((block) => block.addEventListener("click", handleClick));
+  }
+}
+
+let playerHits = [];
+let computerHits = [];
+function handleClick(e) {
+  if (!gameOver) {
+    if (e.target.classList.contains("taken")) {
+      e.target.classList.add("boom");
+      info.textContent = "Hit!";
+      let classes = Array.from(e.target.classList);
+      classes.filter(className > className !== "block");
+      classes.filter(className > className !== "boom");
+      classes.filter(className > className !== "taken");
+      playerHits.push(...clases);
+    }
+  }
+}
+startBtn.addEventListener("click", startGame);
