@@ -194,6 +194,8 @@ function startGame() {
   }
 }
 
+startBtn.addEventListener("click", startGame);
+
 let playerHits = [];
 let computerHits = [];
 function handleClick(e) {
@@ -207,6 +209,49 @@ function handleClick(e) {
       classes.filter(className > className !== "taken");
       playerHits.push(...clases);
     }
+
+    if (e.target.classList.contais("taken")) {
+      info.textContent("Oh! We missed, officer!");
+      //add empty so we know we hit it already
+      e.target.classList.add("empty");
+    }
+    playerTurn = false;
+    const allBlocks = document.querySelectorAll("#copmputer div");
+    //remove event listener from all items
+    allBlocks.forEach((block) => block.replaceWith(block.cloneNode(true)));
+    setTimeout(computerTurn, 3000);
   }
 }
-startBtn.addEventListener("click", startGame);
+
+//define computer playing
+//define computer playing
+function computerTurn() {
+  if (!gameOver) {
+    turn.textContent = "Enemy's Turn!";
+    info.textContent = "The enemy is afoot!";
+
+    setTimeout(() => {
+      let randomGo = Math.floor(Math.random() * width * width);
+      const allBlocks = document.querySelectorAll("#player div");
+
+      if (
+        allBlocks[randomGo].classList.contains("taken") &&
+        allBlocks[randomGo].classList.contains("boom")
+      ) {
+        computerTurn();
+        return;
+      } else if (
+        allBlocks[randomGo].classList.contains("taken") &&
+        !allBlocks[randomGo].classList.contains("boom")
+      ) {
+        allBlocks[randomGo].classList.add("boom");
+        info.textContent("The enemy hit us!");
+        let classes = Array.from(e.target.classList);
+        classes.filter(className > className !== "block");
+        classes.filter(className > className !== "boom");
+        classes.filter(className > className !== "taken");
+        computerHits.push(...clases);
+      }
+    });
+  }
+}
