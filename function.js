@@ -83,7 +83,7 @@ function handleValidity(allBlocks, isHorizontal, startIndex, ship) {
   if (isHorizontal) {
     valid = shipBlocks.every(
       (_shipBlock, index) =>
-        shipBlocks[0].id % width !== width - (shipBlocks.length - (index + 1))
+        shipBlocks[0].id % width <= width - ship.length + index
     );
   } else {
     valid = shipBlocks.every(
@@ -124,6 +124,7 @@ function addShipPiece(user, ship, startId) {
     if (user === "player") notDragged = true;
   }
 }
+
 ships.forEach((ship) => addShipPiece("computer", ship));
 
 //draggable ships
@@ -221,13 +222,24 @@ function handleClick(e) {
     if (e.target.classList.contains("taken")) {
       info.textContent = "Oh! We struck them!";
       //add empty so we know we hit it already
-      e.target.classList.add("empty");
+      e.target.classList.add("boom");
     }
     playerTurn = false;
     const allBlocks = document.querySelectorAll("#copmputer div");
     //remove event listener from all items
     allBlocks.forEach((block) => block.replaceWith(block.cloneNode(true)));
     setTimeout(computerTurn, 3000);
+  }
+}
+const allComputerBlocks = document.querySelectorAll("#computer div");
+allComputerBlocks.forEach((computerBlock) => {
+  computerBlock.addEventListener("click", clickBlock);
+});
+
+function clickBlock(e) {
+  const block = e.target;
+  if (!block.classList.contains("taken")) {
+    block.classList.add("empty");
   }
 }
 
