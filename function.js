@@ -65,8 +65,7 @@ function handleValidity(allBlocks, isHorizontal, startIndex, ship) {
     ? startIndex <= width * width - ship.length
       ? startIndex
       : width * width - ship.length
-    : //vertical handling
-    startIndex <= width * width - (ship.length - 1) * width
+    : startIndex <= width * width - (ship.length - 1) * width
     ? startIndex
     : startIndex - ship.length * width + width;
 
@@ -91,7 +90,7 @@ function handleValidity(allBlocks, isHorizontal, startIndex, ship) {
   } else {
     shipBlocks.every(
       (_shipBlock, index) =>
-        (valid = shipBlocks[0].id < 90 + (width * index + 1))
+        (valid = shipBlocks[0].id + index * width === shipBlocks[index].id)
     );
   }
 
@@ -186,11 +185,18 @@ let playerTurn;
 
 //start game
 function startGame() {
-  if (option.children.length != 0) {
-    info.textContent = "All ships must be placed before start";
-  } else {
-    const allBlocks = document.querySelectorAll("#computer div");
-    allBlocks.forEach((block) => block.addEventListener("click", handleClick));
+  if (playerTurn === undefined) {
+    if (option.children.length != 0) {
+      info.textContent = "All ships must be placed before start";
+    } else {
+      const allBlocks = document.querySelectorAll("#computer div");
+      allBlocks.forEach((block) =>
+        block.addEventListener("click", handleClick)
+      );
+      playerTurn = true;
+      turn.textContent = "Your turn";
+      info.textContent = "The war has begun";
+    }
   }
 }
 
@@ -281,6 +287,17 @@ function checkScore(user, userHits, userSunkShips) {
         .length === shipLength
     ) {
       info.textContent = `you sunk the ${user}'s ${shipName}`;
+      if (user === "player") {
+        playerHits = userHits.filter(
+          (storedShipName) => storedShipName !== shipName
+        );
+      }
+      if (user === "computer") {
+        playerHits = userHits.filter(
+          (storedShipName) => storedShipName !== shipName
+        );
+      }
+      userSunkShips.push(shipName);
     }
   }
 
@@ -291,4 +308,13 @@ function checkScore(user, userHits, userSunkShips) {
   checkShip("carrier", 5);
   console.log("playerHits", playerHits);
   console.log("playerSunkShips", playerSunkShips);
+
+  if (playerSunkShips.length === 5) {
+    info.textContent = "You have defeated the enemy";
+    gameOver = true;
+  }
+  if (computerSunkShips.length === 5) {
+    info.textContent = "You have been defeated";
+    gameOver = true;
+  }
 }

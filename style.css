@@ -1,3 +1,7 @@
+h1 {
+  text-align: center;
+}
+
 #game-container {
   width: 500px;
   display: flex;
@@ -89,12 +93,20 @@
   background-color: lightgrey;
 }
 
+/* #computer .destroyer,
+#computer .submarine,
+#computer .cruiser,
+#computer .battleship,
+#computer .carrier {
+  background-color: gray;
+} */
+
 .boom {
-  background-color: red;
+  background-color: red !important;
 }
 
 .empty {
-  background-color: lightgrey;
+  background-color: lightgrey !important;
 }
 
 .center-container {
