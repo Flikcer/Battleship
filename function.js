@@ -5,6 +5,23 @@ const startBtn = document.querySelector("#start-button");
 const info = document.querySelector("#info");
 const turn = document.querySelector("#turn-display");
 
+//ship create
+class ship {
+  constructor(name, length) {
+    this.name = name;
+    this.length = length;
+  }
+}
+
+const destroyer = new ship("destroyer", 2);
+const submarine = new ship("submarine", 3);
+const cruiser = new ship("cruiser", 3);
+const battleship = new ship("battleship", 4);
+const carrier = new ship("carrier", 5);
+
+const ships = [destroyer, submarine, cruiser, battleship, carrier];
+let notDragged;
+
 //flip ship
 let angle = 0;
 function flip() {
@@ -42,23 +59,6 @@ function createBoard(color, user) {
 
 createBoard("steelblue", "player");
 createBoard("gray", "computer");
-
-//ship create
-class ship {
-  constructor(name, length) {
-    this.name = name;
-    this.length = length;
-  }
-}
-
-const destroyer = new ship("destroyer", 2);
-const submarine = new ship("submarine", 3);
-const cruiser = new ship("cruiser", 3);
-const battleship = new ship("battleship", 4);
-const carrier = new ship("carrier", 5);
-
-const ships = [destroyer, submarine, cruiser, battleship, carrier];
-let notDragged;
 
 function handleValidity(allBlocks, isHorizontal, startIndex, ship) {
   let validStart = isHorizontal
@@ -198,20 +198,24 @@ startBtn.addEventListener("click", startGame);
 
 let playerHits = [];
 let computerHits = [];
+const playerSunkShips = [];
+const computerSunkShips = [];
+
 function handleClick(e) {
   if (!gameOver) {
     if (e.target.classList.contains("taken")) {
       e.target.classList.add("boom");
       info.textContent = "Hit!";
       let classes = Array.from(e.target.classList);
-      classes.filter(className > className !== "block");
-      classes.filter(className > className !== "boom");
-      classes.filter(className > className !== "taken");
-      playerHits.push(...clases);
+      classes = classes.filter((className) => className !== "block");
+      classes = classes.filter((className) => className !== "boom");
+      classes = classes.filter((className) => className !== "taken");
+      playerHits.push(...classes);
+      checkScore("player", playerHits, playerSunkShips);
     }
 
-    if (e.target.classList.contais("taken")) {
-      info.textContent("Oh! We missed, officer!");
+    if (e.target.classList.contains("taken")) {
+      info.textContent = "Oh! We struck them!";
       //add empty so we know we hit it already
       e.target.classList.add("empty");
     }
@@ -223,7 +227,6 @@ function handleClick(e) {
   }
 }
 
-//define computer playing
 //define computer playing
 function computerTurn() {
   if (!gameOver) {
@@ -245,13 +248,47 @@ function computerTurn() {
         !allBlocks[randomGo].classList.contains("boom")
       ) {
         allBlocks[randomGo].classList.add("boom");
-        info.textContent("The enemy hit us!");
-        let classes = Array.from(e.target.classList);
-        classes.filter(className > className !== "block");
-        classes.filter(className > className !== "boom");
-        classes.filter(className > className !== "taken");
-        computerHits.push(...clases);
+        info.textContent = "The enemy hit us!";
+        let classes = Array.from(allBlocks[randomGo].classList);
+        classes = classes.filter((className) => className !== "block");
+        classes = classes.filter((className) => className !== "boom");
+        classes = classes.filter((className) => className !== "taken");
+        computerHits.push(...classes);
+        checkScore("computer", computerHits, computerSunkShips);
+      } else {
+        info.textContent = "They missed, Captain!";
+        allBlocks[randomGo].classList.add("empty");
       }
-    });
+    }, 3000);
+
+    setTimeout(() => {
+      playerTurn = true;
+      turn.textContent = "Attack!";
+      info.textContent = "Take your shot";
+      const allBlocks = document.querySelectorAll("#computer div");
+      allBlocks.forEach((block) =>
+        block.addEventListener("click", handleClick)
+      );
+    }, 6000);
   }
+}
+
+//determine the score and what ships are hit
+function checkScore(user, userHits, userSunkShips) {
+  function checkShip(shipName, shipLength) {
+    if (
+      userHits.filter((storedShipName) => storedShipName === shipName)
+        .length === shipLength
+    ) {
+      info.textContent = `you sunk the ${user}'s ${shipName}`;
+    }
+  }
+
+  checkShip("destroyer", 2);
+  checkShip("submarine", 3);
+  checkShip("cruiser", 3);
+  checkShip("battleship", 4);
+  checkShip("carrier", 5);
+  console.log("playerHits", playerHits);
+  console.log("playerSunkShips", playerSunkShips);
 }
