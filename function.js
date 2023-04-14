@@ -120,7 +120,7 @@ function addShipPiece(user, ship, startId) {
       shipBlock.classList.add("taken");
     });
   } else {
-    if (user === "computer") addShipPiece("computer", ship);
+    if (user === "computer") addShipPiece("computer", ship, startId);
     if (user === "player") notDragged = true;
   }
 }
